@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>门诊叫号系统</title>
+	<link href="file:///android_asset/bootstrap.min.css" rel="stylesheet">
+	<link href="file:///android_asset/font-awesome.min.css" rel="stylesheet">
+	<!-- Custom styles for this template -->
+	<link href="file:///android_asset/custom.css" rel="stylesheet">
+	<link href="file:///android_asset/demo.css" rel="stylesheet">
+	<script src="file:///android_asset/jquery.min.js" ></script>
+	<script src="file:///android_asset/bootstrap.min.js"></script>
+
+
+	<style>
+		html:-moz-full-screen {background: rgb(1,116,179)}
+		html:-webkit-full-screen {background: rgb(1,116,179)}
+		html:fullscreen {background: rgb(1,116,179)}
+
+		/*html:-moz-full-screen {background: red}*/
+		/*html:-webkit-full-screen {background: red}*/
+		/*html:fullscreen {background: red}*/
+		.row{
+			margin-left: 0;margin-right: 0;
+			padding-left: 0;padding-right: 0;
+		}
+		#call{
+			width: 100%;
+			/*border: 1px solid;*/
+			background-color: rgb(32,41,58);
+			color:white;
+			border-radius: 25px;
+			font-size: 35px;
+			vertical-align: middle;
+			text-align: center;
+			display:none;
+		}
+
+	</style>
+</head>
+<body>
+<div class="header">
+	<div class="row" >
+		<div  class="col-lg-4 col-md-4" style="text-align: left">
+			<img src="file:///android_asset/23.png" onclick="css5()">
+		</div>
+		<div  class="col-lg-4 col-md-4" style="text-align:center">
+			<span class="header_content" id="dept"></span>
+		</div>
+		<div  class="col-lg-4 col-md-4" style="text-align: right" onclick="upd()">
+			<div class="now_date">
+				<span id = "date"></span>
+			</div>
+			<div class="now_time">
+				<span id = "week"></span>
+				<span id = "time"></span>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="content" >
+	<div class="row">
+		<div class="col-lg-12 col-md-12">
+
+			<div id="call"><img  src="file:///android_asset/2.png">&nbsp;&nbsp;&nbsp;&nbsp;请<span style="color: #FFCC00" id="pname"></span>到<span style="color: #FFCC00" id="dname"></span>就诊</div>
+		</div>
+		<div class="col-lg-12 col-md-12" style="margin-top: 10px;">
+			<table class="table" id="call_info">
+				<thead>
+				<tr class='tr_head'>
+					<td>诊室</td><td>医师</td><td class='name'>就诊</td><td>候诊</td>
+				</tr>
+				</thead>
+				<tbody id="call_info_body"></tbody>
+			</table>
+		</div>
+
+	</div>
+</div>
+
+
+<div style="width: 90%;height: 8vh;margin-left: 5%;overflow: hidden;color:white;">
+	<marquee direction="left" behavior="alternate" scrollamount="1"
+	><font size="6" id="tip">温馨提示:请先到报道机报到,然后在候诊区等待叫号,再到诊室就诊</font></marquee>
+</div>
+
+<div class='modal my-modal-alert' id='my-modal-alert'>
+	<div class='modal-dialog boxBodySmall' style="margin: 150px auto;max-width: 80%;">
+		<div class='modal-content' style="height: 90%;">
+			<div class='modal-body' id='modal-body-alert'>
+				<div id='modal_message' style="margin-top: 15%">&nbsp;&nbsp;&nbsp;&nbsp;<span class="patient_class" id = "pat"></span>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+				<div id='modal_message1'>
+					<span class="dept_class" style="width:20%;float:left"></span>
+					<span class="dept_class" id="doc" style="width:60%"></span>
+					<span class="dept_class" style="width:20%;float:right"></span></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+</body>
+<script type="text/javascript">
+	var ip = "http://192.168.0.121/zmMQ";
+	var skip = "ws://192.168.0.121/zmMQ";
+	<!--var ip = "http://192.168.2.199:8080/zmMQ";-->
+	<!--var skip = "ws://192.168.2.199:8080/zmMQ";-->
+	var deptid = getUrlParam("deptid");
+    var websocket = null;
+    <!--var host = document.location.host;-->
+    var username = "001"; // dept
+    // alert(username)
+    //判断当前浏览器是否支持WebSocket
+    if ('WebSocket' in window) {
+        <!--alert("浏览器支持Websocket")-->
+        <!--alert(host)-->
+        websocket = new WebSocket(skip+'/webSocket/ek/001');
+    } else {
+        <!--alert('当前浏览器 Not support websocket')-->
+    }
+
+    //连接发生错误的回调方法
+    websocket.onerror = function() {
+        <!--alert("WebSocket连接发生错误")-->
+        <!--setMessageInnerHTML("WebSocket连接发生错误");-->
+    };
+
+    //连接成功建立的回调方法
+    websocket.onopen = function() {
+
+        <!--alert("WebSocket连接成功")-->
+        <!--setMessageInnerHTML("WebSocket连接成功");-->
+    }
+
+    //接收到消息的回调方法
+    websocket.onmessage = function(event) {
+        <!--alert("接收到消息的回调方法")-->
+        <!--alert("这是后台推送的消息："+event.data);-->
+        if(event.data==''){
+
+        }else if(event.data=='refresh'){
+        	//更新列表
+            var url = ip+"/ScreenServlet?param=list";
+            $.ajax({
+                url:encodeURI(url),type:"GET",dataType:"jsonp",timeout: 5000,jsonp: "callback",
+                data: { "indexPage":1,"pageSize":3},
+                error: function (data){
+
+                },
+                success: function (data) {
+                    if(data.recode == "0"){
+
+						if(data.list.length > 0){
+
+							$("#call_info_body").empty();
+
+							$.each(data.list, function(n,v){
+								$("<tr class='tr_body'></tr>")
+										.append("<td>"+v.dept+"</td><td>"+v.docname+"</td><td class='name'>"+ v.patnamein+"</td><td>"+ v.patnameque+"</td>")
+										.appendTo($("#call_info_body"));
+							});
+							for(var m = 0 ; m < 3-data.list.length; m++){
+								$("<tr class='tr_body'></tr>")
+										.append("<td></td><td></td><td class='name'>&nbsp;</td><td></td>")
+										.appendTo($("#call_info_body"));
+							}
+
+						}else if(data.list.length == 0){
+							$("#call_info_body").empty();
+
+							for(var m = 0;m < 3; m++){
+								$("<tr class='tr_body'></tr>")
+										.append("<td></td><td></td><td class='name'>&nbsp;</td><td></td>")
+										.appendTo($("#call_info_body"));
+							}
+
+						}else{
+
+						}
+                    }else{
+                    }
+
+                }
+            });
+        }else{
+        	//call呼叫
+			var url = ip+"/ScreenServlet?param=call";
+            $.ajax({
+                url:encodeURI(url),type:"GET",dataType:"jsonp",timeout: 5000,jsonp: "callback",
+                data: { "regid":event.data},
+                error: function (data){
+
+                },
+                success: function (data) {
+                    if(data.recode == "0"){
+						if(data.list.length > 0){
+
+							$("#call").show();
+							regid = data.list[0].regid;
+							$("#pname").html(replaceName(data.list[0].patname,1,1,"*"));
+							$("#dname").html(data.list[0].roomname);
+							arr1.push(data.list[0].patname);
+							arr2.push(data.list[0].roomname);
+							arr1_v.push(data.list[0].patname);
+							arr2_v.push(data.list[0].roomname);
+							if(call_v_flag == 0){
+								callInfo();
+							}
+							<!--$("#my-modal-alert").toggle();//显示模态框-->
+							<!--$("#my-modal-alert").show().delay(5000).hide(300);//显示模态框-->
+							<!--clearFlag = window.setInterval("autoClose()",1000);//5秒调用一次autoClose方法,关闭-->
+						}
+                    }else{
+                    }
+
+                }
+            });
+        }
+
+
+//        websocket.close();
+//        alert("webSocket已关闭")
+    }
+	function replaceName(text,start,stop,replacetext){
+        mystr = text.substring(0,start)+replacetext+text.substring(stop+1);
+        return mystr;
+    }
+    //呼叫框
+    var arr1 = new Array();
+    var arr2 = new Array();
+    var arr1_v = new Array();
+    var arr2_v = new Array();
+    var call_v_flag = 0;
+    var callInfo = function(){
+		while(arr1_v.length > 0 && arr2_v.length > 0){
+			call_v_flag = 1;
+			var pinfo = arr1_v.shift();
+			var dinfo = arr2_v.shift();
+			window.android.call("请"+pinfo+"到"+dinfo+"就诊");
+			window.android.call("请"+pinfo+"到"+dinfo+"就诊");
+
+		}
+		call_v_flag = 0;
+    }
+	var call_flag = 0;
+	var show_flag = 0;
+    var callInfo1 = function(){
+
+    	if(arr1.length > 0 && arr2.length > 0){
+			window.clearInterval(clearFlag);
+			var pinfo = arr1.shift();
+			var dinfo = arr2.shift();
+			$("#pat").html(replaceName(pinfo,1,1,"*"));
+			$("#doc").html(dinfo);
+			$("#my-modal-alert").show();
+			setTimeout(function () {
+					$("#my-modal-alert").hide();
+					clearFlag = window.setInterval("callInfo1()",1000);
+				}, 8000);
+		}
+
+    }
+    function sleep(numberMillis) {
+        var now = new Date();
+        var exitTime = now.getTime() + numberMillis;
+        while (true) {
+            now = new Date();
+            if (now.getTime() > exitTime)
+                return;
+        }
+    }
+    var clearFlag;
+    var clearFlag1 = 0;
+    var count = 5;//设置5秒后自动消失
+    var regid;
+    var autoClose = function(){
+    	if(count>0){
+			count--;
+		}else if(count<=0){
+			clearInterval(clearFlag1);
+			$("#my-modal-alert").fadeOut("slow");
+			count = 5;
+			$("#my-modal-alert").toggle();
+			clearFlag = window.setInterval("callInfo()",1000);
+		}
+
+
+	}
+
+
+    //连接关闭的回调方法
+    websocket.onclose = function() {
+        <!--setMessageInnerHTML("WebSocket连接关闭");-->
+    }
+
+    //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+    window.onbeforeunload = function() {
+        closeWebSocket();
+    }
+
+    //关闭WebSocket连接
+    function closeWebSocket() {
+        websocket.close();
+    }
+
+    //将消息显示在网页上
+    function setMessageInnerHTML(innerHTML) {
+        document.getElementById('msg').innerHTML = innerHTML;
+    }
+
+    $(document).ready(function(){
+
+		getDept();
+		clearFlag = window.setInterval("callInfo1()",1000);
+		init();
+
+	});
+	//初始化
+	function init(){
+		var url = ip+"/ScreenServlet?param=list";
+            $.ajax({
+                url:encodeURI(url),type:"GET",dataType:"jsonp",timeout: 5000,jsonp: "callback",
+                data: { "indexPage":1,"pageSize":3},
+                error: function (data){
+
+                },
+                success: function (data) {
+                    if(data.recode == "0"){
+
+						if(data.list.length > 0){
+
+							$("#call_info_body").empty();
+
+							$.each(data.list, function(n,v){
+								$("<tr class='tr_body'></tr>")
+										.append("<td>"+v.dept+"</td><td>"+v.docname+"</td><td class='name'>"+ v.patnamein+"</td><td>"+ v.patnameque+"</td>")
+										.appendTo($("#call_info_body"));
+							});
+							for(var m = 0 ; m < 3-data.list.length; m++){
+								$("<tr class='tr_body'></tr>")
+										.append("<td></td><td></td><td class='name'>&nbsp;</td><td></td>")
+										.appendTo($("#call_info_body"));
+							}
+
+						}else if(data.list.length == 0){
+							$("#call_info_body").empty();
+
+							for(var m = 0;m < 3; m++){
+								$("<tr class='tr_body'></tr>")
+										.append("<td></td><td></td><td class='name'>&nbsp;</td><td></td>")
+										.appendTo($("#call_info_body"));
+							}
+
+						}else{
+
+						}
+                    }else{
+                    }
+
+                }
+            });
+	}
+	//显示科室、提示、时间
+	var curTime = "";
+
+	function getDept(){
+		var url = ip+"/ScreenServlet?param=dept";
+
+		$.ajax({
+			url:encodeURI(url),type:"GET",dataType:"jsonp",timeout: 5000,jsonp: "callback",
+			data: { "deptid":deptid,"tv":"001"},
+			error: function (data){
+
+			},
+			success: function (data) {
+				$("#dept").html(data.deptname);
+				$("#tip").html(data.content);
+
+				$("#date").html(data.date);
+				$("#week").html(data.weekday);
+				$("#time").html(data.time);
+				curTime = data.time;
+				updurl = data.updurl;
+				setInterval("updTime();",1000);
+			}
+		});
+	}
+	//每秒更新时间
+	function updTime(){
+		var h = curTime.substr(0,2);
+		var m = curTime.substr(3,2);
+		var s = curTime.substr(6,2);
+		var s1 = parseInt(s);
+		if(s1==59){
+			if(parseInt(m)==59){
+				if(parseInt(h)==23){
+					curTime = "00:00:00";
+				}else{
+					var h1 = formatTime(parseInt(h)+1);
+					curTime = h1+":00:00";
+				}
+			}else{
+				var m1 = formatTime(parseInt(m)+1);
+				curTime = h+":"+m1+":00";
+			}
+		}else{
+			curTime = h+":"+m+":"+formatTime(s1+1);
+		}
+		$("#time").html(curTime);
+	}
+
+	function formatTime(num){
+		var nameUpd = "";
+		if(parseInt(num) < 10){
+			nameUpd = "0"+parseInt(num);
+		}else{
+			nameUpd = ""+num;
+		}
+		return nameUpd;
+	}
+	function getUrlParam(name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+		var r = decodeURI(window.location.search).substr(1).match(reg);  //匹配目标参数
+		if (r != null) return unescape(r[2]); return ""; //返回参数值
+	}
+	function css5(){
+		window.android.call("请付梵宸到 儿科2诊室 就诊");
+	}
+	var updurl="";
+
+	function upd(){
+		window.android.upd(updurl);
+		closeWebSocket();
+	}
+</script>
+</html>

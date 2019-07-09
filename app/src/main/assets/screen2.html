@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>门诊叫号系统</title>
+	<link href="file:///android_asset/bootstrap.min.css" rel="stylesheet">
+	<link href="file:///android_asset/font-awesome.min.css" rel="stylesheet">
+	<!-- Custom styles for this template -->
+	<link href="file:///android_asset/custom.css" rel="stylesheet">
+	<link href="file:///android_asset/demo.css" rel="stylesheet">
+	<script src="file:///android_asset/jquery.min.js" ></script>
+	<script src="file:///android_asset/bootstrap.min.js"></script>
+
+
+	<style>
+		html:-moz-full-screen {background: rgb(1,116,179)}
+		html:-webkit-full-screen {background: rgb(1,116,179)}
+		html:fullscreen {background: rgb(1,116,179)}
+
+		/*html:-moz-full-screen {background: red}*/
+		/*html:-webkit-full-screen {background: red}*/
+		/*html:fullscreen {background: red}*/
+		.row{
+			margin-left: 0;margin-right: 0;
+			padding-left: 0;padding-right: 0;
+		}
+		#call{
+			width: 99%;
+			/*border: 1px solid;*/
+			background-color: rgb(32,41,58);
+			color:white;
+			border-radius: 25px;
+			font-size: 25px;
+			vertical-align: middle;
+			text-align: center;
+		}
+		.table{width:33%;color:white;text-align: center;font-size: 30px;line-height: 0;float: left;margin-left: 0;
+		}
+.table td{
+	vertical-align: middle;
+	text-align: center;
+	padding: 0px;
+	line-height: 0;
+	white-space:nowrap;
+	overflow: hidden;
+	text-overflow:ellipsis;
+}
+	</style>
+</head>
+<body>
+<div class="header">
+	<div class="row">
+		<div  class="col-lg-4 col-md-4" style="text-align: left">
+			<img src="file:///android_asset/23.png">
+		</div>
+		<div  class="col-lg-8 col-md-8" style="text-align:center">
+			<button onclick="css6()">出声</button>
+			<button onclick="css7()">出声</button>
+			<button onclick="css1()">字体加一</button>
+			<button onclick="css2()">字体减一</button>
+			<button onclick="css3()">有间隔</button>
+			<button onclick="css4()">无间隔</button>
+			<!--<button onclick="css6()">出声</button>-->
+			<!--<button onclick="css7()">出声</button>-->
+		</div>
+
+	</div>
+</div>
+<div class="content" >
+	<div class="row">
+		<div class="col-lg-12 col-md-12">
+			<div id="call"><img  src="file:///android_asset/2.png">&nbsp;&nbsp;&nbsp;&nbsp;请<span style="color: #FFCC00">王梓瑞</span>到<span style="color: #FFCC00">儿科隔离诊室</span>就诊</div>
+		</div>
+		<div class="col-lg-12 col-md-12" style="margin-top: 10px;">
+			<table class="table" id="call_info">
+				<thead>
+				<tr class='tr_head'>
+					<td>诊室</td><td>医师</td><td class='name'>就诊</td><td style="border-right: #ffffff 1px solid">候诊</td>
+				</tr>
+				</thead>
+				<tbody>
+				<tr class='tr_body'>
+					<td>1101</td><td>杨荣凤</td><td class='name'>王梓瑞</td><td style="border-right: #ffffff 1px solid">张婉萱</td>
+
+				</tr>
+				<tr class='tr_body'>
+
+					<td>1102</td><td>杨荣凤</td><td class='name'>王梓瑞</td><td style="border-right: #ffffff 1px solid">张婉萱</td>
+
+				</tr>
+				<tr class='tr_body'>
+
+					<td>1103</td><td>杨荣凤</td><td class='name'>王梓瑞</td><td style="border-right: #ffffff 1px solid">张婉萱</td>
+				</tr>
+				</tbody>
+			</table>
+
+			<table class="table" id="call_info1">
+				<thead>
+				<tr class='tr_head'>
+					<td>诊室</td><td>医师</td><td class='name'>就诊</td><td style="border-right: #ffffff 1px solid">候诊</td>
+				</tr>
+				</thead>
+				<tbody>
+				<tr class='tr_body'>
+					<td>1</td><td>杨荣凤</td><td class='name'>王梓瑞</td><td style="border-right: #ffffff 1px solid">张婉萱</td>
+
+				</tr>
+				<tr class='tr_body'>
+
+					<td>2</td><td>杨荣凤</td><td class='name'>王梓瑞</td><td style="border-right: #ffffff 1px solid">张婉萱</td>
+
+				</tr>
+				<tr class='tr_body'>
+
+					<td>1103</td><td>杨荣凤</td><td class='name'>王梓瑞</td><td style="border-right: #ffffff 1px solid">张婉萱</td>
+				</tr>
+				</tbody>
+			</table>
+
+			<table class="table" id="call_info2">
+				<thead>
+				<tr class='tr_head'>
+					<td>诊室</td><td>医师</td><td class='name'>就诊</td><td style="border-right: #ffffff 1px solid">候诊</td>
+				</tr>
+				</thead>
+				<tbody>
+				<tr class='tr_body'>
+					<td>1</td><td>杨荣凤</td><td class='name'>王梓瑞</td><td style="border-right: #ffffff 1px solid">张婉萱</td>
+
+				</tr>
+				<tr class='tr_body'>
+
+					<td>2</td><td>杨荣凤</td><td class='name'>王梓瑞</td><td style="border-right: #ffffff 1px solid">张婉萱</td>
+
+				</tr>
+				<tr class='tr_body'>
+
+					<td>1107</td><td>杨荣凤</td><td class='name'>王梓瑞</td><td style="border-right: #ffffff 1px solid">张婉萱</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+</div>
+<!--<marquee direction="left" behavior="scroll" scrollamount="3" style="width: 80%;height: 4vh;margin-left: 10%;overflow: hidden;color:white;">shentijiank</marquee>-->
+<div style="width: 90%;height: 8vh;margin-left: 5%;overflow: hidden;color:white;">
+	<marquee direction="left" behavior="alternate" scrollamount="1"
+	><font size="6" id="tip">温馨提示:请先到报道机报到,然后在候诊区等待叫号,再到诊室就诊</font></marquee>
+</div>
+</body>
+<script>
+	function css1(){
+		var nowFS = $(".table").css('font-size');
+		var fs = nowFS.substr(0,nowFS.length-2);
+
+		$(".table").css("font-size",(parseInt(fs)+1)+"px");
+	}
+	function css2(){
+		var nowFS = $(".table").css('font-size');
+		var fs = nowFS.substr(0,nowFS.length-2);
+		$(".table").css("font-size",(parseInt(fs)-1)+"px");
+	}
+	function css3(){
+		$(".table").css("width","31%");
+		$(".table").css("margin-left","2%");
+	}
+	function css4(){
+		$(".table").css("width","33%");
+		$(".table").css("margin-left","0");
+	}
+
+	function css6(){
+		window.android.call("请张三到妖妖妖8诊室就诊");
+	}
+	function css7(){
+		window.android.call("请张三到 1 1 1 8 诊室就诊");
+	}
+	$(document).ready(function(){
+
+		<!--getDept();-->
+		<!--clearFlag = window.setInterval("callInfo()",1000);-->
+		<!--init();-->
+
+	});
+</script>
+</html>
